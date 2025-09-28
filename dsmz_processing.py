@@ -21,7 +21,7 @@ for i in range(len(info)):
         all_habitats.add(re.split(r'/OBT:|/', info[i][7])[-1])    
     else:
         if any(t.startswith("bd:") for t in re.split(r'/ncbi:|/', info[i][3])[1:]):                                               #Deleting bd: specifications in NCBI path
-            bacteria[info[i][8]] = [re.split(r'/ncbi:|/', info[i][3])[1:-1], re.split(r'/OBT:|/', info[i][7])[-1]]
+            bacteria[info[i][8]] = [re.split(r'/ncbi:|/', info[i][3])[1:], [re.split(r'/OBT:|/', info[i][7])[-1]]]
             all_ncbi.update(re.split(r'/ncbi:|/', info[i][3])[1:-1])
             all_habitats.add(re.split(r'/OBT:|/', info[i][7])[-1])
         else:
@@ -57,7 +57,7 @@ for bd_code, (taxids, habitats) in bacteria.items():
 #Creating sparse matrix  (LIst of List, easy to fill)
 sparse_mat = sp.lil_matrix((len(row_labels), len(column_labels)), dtype=float)
 
-#Filling                                                                                                                                         #limiti comodi (?) per dare meno importanza ai nodONI e + importanza ai nodINI
+#Filling
 for ncbi, ncbi_idx in r_label_to_index.items():
     bacteria_of_ncbi = set(bd_code for sublist in matrix[ncbi_idx].values() for bd_code in sublist)    #Takes all of the bacteria that shares same "r"-ncbi
     for habitat_idx, bd_list in matrix[ncbi_idx].items():    #For takes the bacdive codes list for each column
