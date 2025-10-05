@@ -1,7 +1,10 @@
 from collections import defaultdict
+from collections import Counter
 import re
 import scipy.sparse as sp
 import json
+import numpy as np
+import matplotlib.pyplot as plt
 
 data_files_path = "/home/selvaggio/Desktop/complex networks/Project/"
 
@@ -10,25 +13,39 @@ with open(data_files_path + "DSMZ_Habitat.txt", 'r') as text:
     info = [line.strip().split("\t") for line in text]
 
 bacteria = {}
-all_ncbi = set()
-all_habitats = set()
 
-#Filling bacteria dict
-#and set() of taxID and habitats
+#Filling bacteria dict as: Bacterium[BD_CODE] = [[NCBI/PATH/TO/BACTERIUM], [LAST/FIVE/HABITATS/OF/PATHS]]
 for i in range(len(info)):
-    if bacteria.get(info[i][8]) and bacteria[info[i][8]][1]!=re.split(r'/OBT:|/', info[i][7])[-1]: #if bacterium already exists
-        bacteria[info[i][8]][1] += re.split(r'/OBT:|/', info[i][7])[-1]
-        all_habitats.add(re.split(r'/OBT:|/', info[i][7])[-1])    
+    bd_code = info[i][8]
+    ncbi_path = [t for t in re.split(r'/ncbi:|/', info[i][3])[1:] if t and not t.startswith("bd:")]
+    habitat_paths = info[i][7].split(',')
+    habitat_path = set()
+    for hp in habitat_paths:
+        habitat_path.update([h for h in re.split(r'/OBT:|/', hp)[-5:] if h])
+    if bd_code in bacteria:                                                                         #if bacterium already exists it adds new habitats
+        bacteria[bd_code][1].update(habitat_path)
     else:
-        if any(t.startswith("bd:") for t in re.split(r'/ncbi:|/', info[i][3])[1:]):                                               #Deleting bd: specifications in NCBI path
-            bacteria[info[i][8]] = [re.split(r'/ncbi:|/', info[i][3])[1:], [re.split(r'/OBT:|/', info[i][7])[-1]]]
-            all_ncbi.update(re.split(r'/ncbi:|/', info[i][3])[1:-1])
-            all_habitats.add(re.split(r'/OBT:|/', info[i][7])[-1])
-        else:
-            bacteria[info[i][8]]=[re.split(r'/ncbi:|/', info[i][3])[1:], re.split(r'/OBT:|/', info[i][7])[-1]]
-            all_ncbi.update(re.split(r'/ncbi:|/', info[i][3])[1:])
-            all_habitats.add(re.split(r'/OBT:|/', info[i][7])[-1])
-#Bacterium[BD_CODE] = [[NCBI/PATH/TO/BACTERIUM], MOST_SPECIFIC_HABITAT]
+        bacteria[bd_code] = [ncbi_path, habitat_path]
+for bd_code in bacteria:
+    bacteria[bd_code][1] = list(bacteria[bd_code][1])
+
+#Habitats filter >3
+habitat_counter = Counter()
+for _, habitats in bacteria.values():
+    habitat_counter.update(habitats)
+
+excluded_habitats = {"000001"}
+min_bacteria_per_habitat = 3
+filtered_habitats = {habitat for habitat, count in habitat_counter.items() if count >= min_bacteria_per_habitat and habitat not in excluded_habitats}
+
+#Taxonomy ID filter >3
+ncbi_counter = Counter()
+for ncbi, _ in bacteria.values():
+    ncbi_counter.update(ncbi)
+
+excluded_ncbi = {"1"}
+min_bacteria_per_ncbi = 3
+filtered_ncbi = {ncbi for ncbi, count in ncbi_counter.items() if count >= min_bacteria_per_ncbi and ncbi not in excluded_ncbi}
 
 #Creating matrix
 matrix = defaultdict(lambda: defaultdict(list))
