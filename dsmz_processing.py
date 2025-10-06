@@ -48,12 +48,11 @@ min_bacteria_per_ncbi = 3
 filtered_ncbi = {ncbi for ncbi, count in ncbi_counter.items() if count >= min_bacteria_per_ncbi and ncbi not in excluded_ncbi}
 
 #Creating matrix
-matrix = defaultdict(lambda: defaultdict(list))
-row_labels = list(all_ncbi)
-column_labels = list(all_habitats)
+matrix = defaultdict(lambda: defaultdict(set))          #this structure automatically creates the dict whenever we call a key that doesn't exist
+row_labels = list(filtered_ncbi)
+column_labels = list(filtered_habitats)
 r_label_to_index = {label: idx for idx, label in enumerate(row_labels)}
 c_label_to_index = {label: idx for idx, label in enumerate(column_labels)}
-index_to_r_label = dict(enumerate(row_labels))
 
 #Storing configuration of matrix in json
 with open("labels.json", "w") as f:
@@ -62,14 +61,18 @@ with open("labels.json", "w") as f:
         "column_labels": column_labels
     }, f, indent=2)
 
-#Creating storing info matrix
+#Filling matrix: Element ij of matrix is the list of bacdive codes (bacteria)
+    #that share same ncbi and live same habitat
 for bd_code, (taxids, habitats) in bacteria.items():
-    for taxid in filter(None, taxids):
-        for habitat in filter(None, habitats):
-            i = r_label_to_index.get(taxid)
-            j = c_label_to_index.get(habitat)
-            if i is not None and j is not None:
-                matrix[i][j].append(bd_code)    #Element ij of sparse matrix is the list of bacdive codes (bacteria) that share same ncbi and live same habitat
+    bac_taxids_filtered = [t for t in taxids if t in r_label_to_index]
+    bac_habitats_filtered = [h for h in habitats if h in c_label_to_index]
+
+    for taxid in bac_taxids_filtered:
+        for habitat in bac_habitats_filtered:
+            i = r_label_to_index[taxid]
+            j = c_label_to_index[habitat]
+            matrix[i][j].add(bd_code)
+
 
 #Creating sparse matrix  (LIst of List, easy to fill)
 sparse_mat = sp.lil_matrix((len(row_labels), len(column_labels)), dtype=float)
@@ -80,18 +83,39 @@ for ncbi, ncbi_idx in r_label_to_index.items():
     for habitat_idx, bd_list in matrix[ncbi_idx].items():    #For takes the bacdive codes list for each column
         sparse_mat[ncbi_idx, habitat_idx] = float(len(bd_list)) / float(len(bacteria_of_ncbi))   #Element ij of sparse matrix is the number of bacteria that is_a ncbi and lives_in habitat over the total number of bacteria that is_a ncbi
 
-#Conversion of matrix (Compressed Sparse Row, easy to compute with)
+#Conversion of matrix (Compressed Sparse Row, easy for computations)
 sparse_mat = sparse_mat.tocsr()
 
+#Matrix times its transpose gives us a similarity matrix ~ adj_matrix [n_ncbiXn_ncbi]
 similarity_mat = sparse_mat @ sparse_mat.T
 
-#Conversion to final Matrix (COOrdinate list, better to store)
-similarity_coo_mat = similarity_mat.tocoo()
-sp.save_npz(data_files_path + "similarity_coo_mat.npz", similarity_coo_mat)
+#Filtering on the highest k arcs' values of each node
+k=4227
+rows, cols, data = [], [], []
 
-# TO LOAD IT USE: similarity_coo_mat = load_npz(data_files_path + "similarity_coo_mat.npz")
+for i in range(similarity_mat.shape[0]):
+    start = similarity_mat.indptr[i]                    #start of row
+    end = similarity_mat.indptr[i+1]                    #end of row
+    row_cols = similarity_mat.indices[start:end]        #indices of columns
+    row_data = similarity_mat.data[start:end]           #data ordered following previous rules
+
+    if row_data.size > k:
+        top_idx = np.argpartition(row_data, -k)[-k:]    #Indices of k highest values
+        row_cols = row_cols[top_idx]                    #Filtering column indices with top_indx
+        row_data = row_data[top_idx]                    #Filtering related data with top_indx
+
+    rows.extend([i] * len(row_cols))                    #For each element of i row assignes "i”
+    cols.extend(row_cols)                               #Adds top-k filtered columns (indices)
+    data.extend(row_data)                               #Adds top-k filtered effective values to data array
+
+#Producing final (COO, COOrdinates) matrix
+similarity_mat = sp.coo_matrix((data, (rows, cols)), shape=similarity_mat.shape)
+
+#Saving matrix
+sp.save_npz(data_files_path + "similarity_coo_mat_1.npz", similarity_mat)
 
 with open(data_files_path + "BD_ncbi_hab_id.txt", 'w') as text:
     for name, values in list(bacteria.items()):
-        ncbi_clean = [' N' + elem for elem in values[0] if elem is not None ] 
-        text.write(f"{name}\t{'\t'.join(ncbi_clean)}\tO{values[1]}\n")
+        ncbi_clean = ['N' + elem for elem in values[0] if elem]
+        habitat_clean = ['O' + elem for elem in values[1] if elem]
+        text.write(f"{name}\t{'\t'.join(ncbi_clean)}\t{'\t'.join(habitat_clean)}\n")
