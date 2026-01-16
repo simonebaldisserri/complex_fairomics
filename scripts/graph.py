@@ -37,7 +37,7 @@ print(f"\nExecution time after nx.graph construction: {elapsed:.2f} seconds ({el
 degrees = [degree for node, degree in similarity_graph.degree(weight="weight")]
 
 df_degrees = pd.DataFrame({"weighted_degree": degrees})
-df_degrees.to_csv(os.path.join(STAGING_DATA_DIR, "degrees_i.csv", index=False))
+df_degrees.to_csv(os.path.join(STAGING_DATA_DIR, "degrees_i.csv"), index=False)
 
 print("Saved degrees_i.csv")
 end_time = time.time() 
@@ -140,7 +140,7 @@ print(f"Number of non-zero elements after sparsification:", similarity_graph.num
 degrees = [degree for node, degree in similarity_graph.degree(weight="weight")]
 
 df_degrees = pd.DataFrame({"weighted_degree": degrees})
-df_degrees.to_csv(os.path.join(STAGING_DATA_DIR, "degrees_ii.csv", index=False))
+df_degrees.to_csv(os.path.join(STAGING_DATA_DIR, "degrees_ii.csv"), index=False)
 
 print("Saved degrees_ii.csv")
 end_time = time.time() 

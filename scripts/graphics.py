@@ -21,7 +21,7 @@ with open(os.path.join(STAGING_DATA_DIR, "graph_layout_data_no_fungi.json"), "r"
 nodes_df = pd.read_csv(os.path.join(STAGING_DATA_DIR, "ncbi_node_info_with_communities.csv"))
 rank_dist_df = pd.read_csv(os.path.join(STAGING_DATA_DIR, "community_rank_distribution.csv"))
 summary_df = pd.read_csv(os.path.join(STAGING_DATA_DIR, "summaries_of_communities.csv"))
-bc_cc_df = pd.read_csv(os.path.join(STAGING_DATA_DIR, "ncbi_bc_cc(2000-70%)_no_fungi.txt", sep="\t"))
+bc_cc_df = pd.read_csv(os.path.join(STAGING_DATA_DIR, "ncbi_bc_cc(2000-70%)_no_fungi.txt"), sep="\t")
 degrees_i_df = pd.read_csv(os.path.join(STAGING_DATA_DIR, "degrees_i.csv"))
 degrees_ii_df = pd.read_csv(os.path.join(STAGING_DATA_DIR, "degrees_ii.csv"))
 
@@ -158,7 +158,7 @@ plt.xlabel("Rank")
 plt.title("Global distribution of deepest taxonomic ranks")
 plt.xticks(rotation=90)
 plt.tight_layout()
-plt.savefig(os.path.join(RESULTS_DIR, "global_deepest_rank_distribution.png", dpi=300))
+plt.savefig(os.path.join(RESULTS_DIR, "global_deepest_rank_distribution.png"), dpi=300)
 plt.close()
 print("Saved global_deepest_rank_distribution.png")
 
@@ -186,7 +186,7 @@ for rank in RANKS:
     plt.title(f"Community size vs {rank.capitalize()} count")
     plt.grid(True)
     plt.tight_layout()
-    plt.savefig(os.path.join(RESULTS_DIR, f"Comm_size_vs_{rank.capitalize()}.png", dpi=300, bbox_inches="tight"))
+    plt.savefig(os.path.join(RESULTS_DIR, f"Comm_size_vs_{rank.capitalize()}.png"), dpi=300, bbox_inches="tight")
     plt.close()
 print("Saved Comm_size_vs_\"rank\" plots")
 
@@ -215,7 +215,7 @@ plt.title("Taxonomic dispersion per rank")
 plt.xlabel("Rank")
 plt.ylabel("Dispersion (#taxa / community size)")
 
-plt.savefig(os.path.join(RESULTS_DIR, "taxonomic_dispersion_boxplot_no_fungi.png", dpi=300))
+plt.savefig(os.path.join(RESULTS_DIR, "taxonomic_dispersion_boxplot_no_fungi.png"), dpi=300)
 plt.close()
 print("Saved taxonomic_dispersion_boxplot_no_fungi.png")
 
@@ -257,7 +257,7 @@ plt.title("Rank composition of top 10 communities")
 plt.legend(title="Rank", bbox_to_anchor=(1.02, 1), loc="upper left")
 
 plt.tight_layout()
-plt.savefig(os.path.join(RESULTS_DIR, "stacked_rank_composition_top10_no_fungi.png", dpi=300))
+plt.savefig(os.path.join(RESULTS_DIR, "stacked_rank_composition_top10_no_fungi.png"), dpi=300)
 plt.close()
 print("Saved stacked_rank_composition_top10_no_fungi.png")
 
