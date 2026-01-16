@@ -5,7 +5,3 @@ Fairomics_env/
 
 __pycache__/
 
-# Data
-project_data/
-#OS
-.DS_Store
