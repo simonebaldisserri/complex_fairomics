@@ -47,9 +47,6 @@ for node, comm_id in zip(labels, communities):
     comm_to_nodes[comm_id].append(node)
 
 communities_sorted = sorted(comm_to_nodes.items(), key=lambda x: len(x[1]), reverse=True)
-print(f"\nFound {len(communities_sorted)} communities.\n")
-
-
 ncbi_to_communities = defaultdict(list)
 community_rank_summary = {}
 community_rank_full = {}
@@ -116,7 +113,7 @@ with open(os.path.join(STAGING_DATA_DIR, output_file), "w", newline="") as f:
                 round(percentage, 3)
             ])
 
-print(f"Saved full rank distributions (size>1) to {output_file}")
+print(f"\nSaved full rank distributions (size>1) to: {output_file}")
 
 
 output_file = "ncbi_node_info_with_communities.csv"
@@ -137,7 +134,7 @@ with open(os.path.join(STAGING_DATA_DIR, output_file), "w", newline="") as f:
 
         writer.writerow([ncbi, name, rank, comm_str])
 
-print(f"Saved node info table to: {output_file}")
+print(f"\nSaved node info table to: {output_file}")
 
 output_file = "summaries_of_communities.csv"
 
@@ -170,4 +167,4 @@ with open(os.path.join(STAGING_DATA_DIR, output_file), "w", newline="") as f:
 
         writer.writerow(row)
 
-print(f"Saved communities' summeries to: {output_file}")
+print(f"\nSaved communities' summeries to: {output_file}")

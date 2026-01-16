@@ -22,16 +22,15 @@ with open(os.path.join(STAGING_DATA_DIR,  "labels_no_fungi.json"), "r") as f:
 row_labels = labels["row_labels"]
 column_labels = labels["column_labels"]
 
-print("Number of non-zero elements:", similarity_coo_mat.nnz)
-
 similarity_graph = nx.Graph()
 for i, j, w in tqdm(zip(similarity_coo_mat.row, similarity_coo_mat.col, similarity_coo_mat.data), desc = "Costruzione Graph"):
     if w > 0:
         similarity_graph.add_edge(row_labels[i], row_labels[j], weight=w)
+print("Number of non-zero elements of the graph:", similarity_coo_mat.nnz)
 
 end_time = time.time() 
 elapsed = end_time - start_time
-print(f"\nExecution time after nx.graph construction: {elapsed:.2f} seconds ({elapsed/60:.2f} minutes)")
+print(f"Execution time after nx.graph construction: {elapsed:.2f} seconds ({elapsed/60:.2f} minutes)")
 
 # Degree computation
 degrees = [degree for node, degree in similarity_graph.degree(weight="weight")]
@@ -39,10 +38,10 @@ degrees = [degree for node, degree in similarity_graph.degree(weight="weight")]
 df_degrees = pd.DataFrame({"weighted_degree": degrees})
 df_degrees.to_csv(os.path.join(STAGING_DATA_DIR, "degrees_i.csv"), index=False)
 
-print("Saved degrees_i.csv")
+print("\nSaved degrees_i.csv")
 end_time = time.time() 
 elapsed = end_time - start_time
-print(f"\nExecution time after saving degrees_i: {elapsed:.2f} seconds ({elapsed/60:.2f} minutes)")
+print(f"Execution time after saving degrees_i: {elapsed:.2f} seconds ({elapsed/60:.2f} minutes)")
 
 
 # 3D spring layout
@@ -60,7 +59,7 @@ communities = [partition[n] for n in labels]
     # Number of communities
 unique_comms = sorted(set(communities))
 N = len(unique_comms)
-print(f"Found {N} communities")
+print(f"\nFound {N} communities")
 
 pos3_list = {node: pos3[node].tolist() for node in labels}
 
@@ -72,7 +71,7 @@ with open(os.path.join(STAGING_DATA_DIR, "graph_layout_data_no_fungi.json"), "w"
 print("Saved graph_layout_data.json")
 end_time = time.time() 
 elapsed = end_time - start_time
-print(f"\nExecution time after 3D nx.spring_layout and community detection: {elapsed:.2f} seconds ({elapsed/60:.2f} minutes)")
+print(f"Execution time after 3D nx.spring_layout and community detection: {elapsed:.2f} seconds ({elapsed/60:.2f} minutes)")
 
 
 #Betweenness Centrality
@@ -142,10 +141,10 @@ degrees = [degree for node, degree in similarity_graph.degree(weight="weight")]
 df_degrees = pd.DataFrame({"weighted_degree": degrees})
 df_degrees.to_csv(os.path.join(STAGING_DATA_DIR, "degrees_ii.csv"), index=False)
 
-print("Saved degrees_ii.csv")
+print("\nSaved degrees_ii.csv")
 end_time = time.time() 
 elapsed = end_time - start_time
-print(f"\nExecution time after saving degrees_ii: {elapsed:.2f} seconds ({elapsed/60:.2f} minutes)")
+print(f"Execution time after saving degrees_ii: {elapsed:.2f} seconds ({elapsed/60:.2f} minutes)")
 
 
 # Clustering Coefficient

@@ -85,7 +85,7 @@ fig.write_html(os.path.join(RESULTS_DIR, "louvain_3d_graph_22_no_fungi.html"))
 print("Saved louvain_3d_graph_22.html")
 
 elapsed = time.time() - start_time
-print(f"\nExecution time after 3D Scatter Plot generation: {elapsed:.2f} seconds ({elapsed/60:.2f} minutes)")
+print(f"Execution time after 3D Scatter Plot generation: {elapsed:.2f} seconds ({elapsed/60:.2f} minutes)")
 
 bc_cc_df = bc_cc_df.merge(nodes_df[["ncbi", "rank"]], on="ncbi", how="left")
 
@@ -107,18 +107,20 @@ fig = px.scatter(
 )
 
 fig.write_html(os.path.join(RESULTS_DIR, "bc_cc_scatterplot_22_no_fungi.html"))
-print("Saved bc_cc_scatterplot_22_no_fungi.html")
+print("\nSaved bc_cc_scatterplot_22_no_fungi.html")
 
 elapsed = time.time() - start_time
-print(f"\nExecution time after Betweenness centrality-Clustering coefficient Scatter Plot generation: {elapsed:.2f} seconds ({elapsed/60:.2f} minutes)")
+print(f"Execution time after Betweenness centrality-Clustering coefficient Scatter Plot generation: {elapsed:.2f} seconds ({elapsed/60:.2f} minutes)")
 
 # Degree distributions plots generation
 degrees_i = degrees_i_df["weighted_degree"].values
+print("\n=== Degree statistics ===")
 print(f"Min degree: {degrees_i.min():.2f}")
 print(f"Max degree: {degrees_i.max():.2f}")
 print(f"Mean degree: {degrees_i.mean():.2f}")
 
 degrees_ii = degrees_ii_df["weighted_degree"].values
+print("\n=== Degree statistics (after sparsification) ===")
 print(f"Min degree: {degrees_ii.min():.2f}")
 print(f"Max degree: {degrees_ii.max():.2f}")
 print(f"Mean degree: {degrees_ii.mean():.2f}")
@@ -160,10 +162,10 @@ plt.xticks(rotation=90)
 plt.tight_layout()
 plt.savefig(os.path.join(RESULTS_DIR, "global_deepest_rank_distribution.png"), dpi=300)
 plt.close()
-print("Saved global_deepest_rank_distribution.png")
+print("\nSaved global_deepest_rank_distribution.png")
 
 elapsed = time.time() - start_time
-print(f"\nExecution time after Global deepest rank distribution plot generation: {elapsed:.2f} seconds ({elapsed/60:.2f} minutes)")
+print(f"Execution time after Global deepest rank distribution plot generation: {elapsed:.2f} seconds ({elapsed/60:.2f} minutes)")
 
 
 # Filtering target ranks
@@ -188,10 +190,10 @@ for rank in RANKS:
     plt.tight_layout()
     plt.savefig(os.path.join(RESULTS_DIR, f"Comm_size_vs_{rank.capitalize()}.png"), dpi=300, bbox_inches="tight")
     plt.close()
-print("Saved Comm_size_vs_\"rank\" plots")
+print("\nSaved Comm_size_vs_\"rank\" plots")
 
 elapsed = time.time() - start_time
-print(f"\nExecution time after Comm_size_vs_\"rank\" plots generation: {elapsed:.2f} seconds ({elapsed/60:.2f} minutes)")
+print(f"Execution time after Comm_size_vs_\"rank\" plots generation: {elapsed:.2f} seconds ({elapsed/60:.2f} minutes)")
 
 # Taxonomic Dispersion (BOXPLOT)
 dispersion_data = []
@@ -217,10 +219,10 @@ plt.ylabel("Dispersion (#taxa / community size)")
 
 plt.savefig(os.path.join(RESULTS_DIR, "taxonomic_dispersion_boxplot_no_fungi.png"), dpi=300)
 plt.close()
-print("Saved taxonomic_dispersion_boxplot_no_fungi.png")
+print("\nSaved taxonomic_dispersion_boxplot_no_fungi.png")
 
 elapsed = time.time() - start_time
-print(f"\nExecution time after Taxonomic Dispersion Boxplot generation: {elapsed:.2f} seconds ({elapsed/60:.2f} minutes)")
+print(f"Execution time after Taxonomic Dispersion Boxplot generation: {elapsed:.2f} seconds ({elapsed/60:.2f} minutes)")
 
 # Rank composition Stacked Bar Plot (top 10 communities)
 top10 = (
@@ -259,7 +261,7 @@ plt.legend(title="Rank", bbox_to_anchor=(1.02, 1), loc="upper left")
 plt.tight_layout()
 plt.savefig(os.path.join(RESULTS_DIR, "stacked_rank_composition_top10_no_fungi.png"), dpi=300)
 plt.close()
-print("Saved stacked_rank_composition_top10_no_fungi.png")
+print("\nSaved stacked_rank_composition_top10_no_fungi.png")
 
 elapsed = time.time() - start_time
 print(f"\nTotal execution time: {elapsed:.2f} seconds ({elapsed/60:.2f} minutes)")

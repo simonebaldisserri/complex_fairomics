@@ -77,7 +77,7 @@ plt.xlabel("Dissimilarity value")
 plt.ylabel("Frequency")
 plt.title("Distribution of pairwise dissimilarities")
 plt.savefig(os.path.join(RESULTS_DIR, "distribuzione_dissimilarity_mat22_no_fungi.png"), dpi=300)
-print("\n=== Similarity statistics ===")
+print("\n=== Dissimilarity statistics ===")
 print("Min:", vals.min(),
       "Max:", vals.max(),
       "Mean:", vals.mean(),
@@ -101,10 +101,9 @@ heatmap.write_html(os.path.join(RESULTS_DIR, "similarity_22_heatmap_no_fungi.htm
 #Sparse comeback!
 similarity_mat = sp.coo_matrix(similarity_mat)
 
-print(f"number of non zero values: {similarity_mat.nnz}")
-print(f"number of zero values: {(similarity_mat.shape[0] * similarity_mat.shape[0])-similarity_mat.nnz}")
-
 print("\n=== Similarity statistics ===")
+print(f"Number of non zero values: {similarity_mat.nnz}")
+print(f"Number of zero values: {(similarity_mat.shape[0] * similarity_mat.shape[0])-similarity_mat.nnz}")
 print("Min:", vals.min(),
       "Max:", vals.max(),
       "Mean:", vals.mean(),
