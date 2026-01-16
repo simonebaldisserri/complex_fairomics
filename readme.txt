@@ -116,7 +116,7 @@ python scripts/graphics.py
   - `labels_no_fungi.json` → filtered NCBI and habitat labels
   - `similarity_coo_mat22_no_fungi.npz` → COO sparse similarity matrix
   - `graph_layout_data_no_fungi.json` → node positions (3D) and community assignments
-  - `ncbi_bc_cc(2000-70%)_no_fungi.txt` → betweenness and clustering coefficient per node
+  - `ncbi_bc_cc(2000-70%)_no_fungi.txt` → betweenness centrality and clustering coefficient per node
   - Degree CSV files: `degrees_i.csv`, `degrees_ii.csv`
   - Community rank summaries and full distributions:
     - `summaries_of_communities.csv`
