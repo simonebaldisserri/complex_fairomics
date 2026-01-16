@@ -52,15 +52,19 @@ x = [pos3[n][0] for n in labels]
 y = [pos3[n][1] for n in labels]
 z = [pos3[n][2] for n in labels]
 
+print(f"\nSpring layout completed")
+end_time = time.time() 
+elapsed = end_time - start_time
+print(f"Execution time after 3D nx.spring_layout: {elapsed:.2f} seconds ({elapsed/60:.2f} minutes)")
+
     # Louvain community detection
 partition = community_louvain.best_partition(similarity_graph, weight="weight")
 communities = [partition[n] for n in labels]
-
     # Number of communities
 unique_comms = sorted(set(communities))
 N = len(unique_comms)
-print(f"\nFound {N} communities")
 
+print(f"\nFound {N} communities")
 pos3_list = {node: pos3[node].tolist() for node in labels}
 
 output = {"labels": labels, "pos3": pos3_list, "communities": communities, "unique_comms": list(unique_comms), "N": N}
@@ -71,7 +75,7 @@ with open(os.path.join(STAGING_DATA_DIR, "graph_layout_data_no_fungi.json"), "w"
 print("Saved graph_layout_data.json")
 end_time = time.time() 
 elapsed = end_time - start_time
-print(f"Execution time after 3D nx.spring_layout and community detection: {elapsed:.2f} seconds ({elapsed/60:.2f} minutes)")
+print(f"Execution time after community detection: {elapsed:.2f} seconds ({elapsed/60:.2f} minutes)")
 
 
 #Betweenness Centrality
