@@ -38,7 +38,7 @@ def plot_degree_histogram(degrees, bins, filename, xlim=None, ylim=None):
     if ylim is not None:
         plt.ylim(ylim)
 
-    plt.savefig(os.path.join(RESULTS_DIR, filename, dpi=300, bbox_inches="tight"))
+    plt.savefig(os.path.join(RESULTS_DIR, filename), dpi=300, bbox_inches="tight")
     plt.close()
 
 # Generate distinct colors
